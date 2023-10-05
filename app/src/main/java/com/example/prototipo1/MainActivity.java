@@ -9,6 +9,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
 public class MainActivity extends AppCompatActivity {
 
     private Long chargeCounter0 = 0L, chargeCounter1 = 0L;
@@ -17,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
     private Long energyCounter0 = 0L, energyCounter1 = 0L;
     private Long capacity0 = 0L, capacity1 = 0L;
     private Long status0 = 0L, status1 = 0L;
+    private boolean btn01_status = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,19 +51,32 @@ public class MainActivity extends AppCompatActivity {
         btn01.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                chargeCounter0 = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER);
-                currentNow0 = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW);
-                currentAverage0 = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_AVERAGE);
-                energyCounter0 = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_ENERGY_COUNTER);
-                capacity0 = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
-                status0 = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_STATUS);
+                if (btn01_status) {
 
-                tv05.setText("" + chargeCounter0);
-                tv10.setText("" + currentNow0);
-                tv15.setText("" + currentAverage0);
-                tv20.setText("" + energyCounter0);
-                tv25.setText("" + capacity0);
-                tv30.setText("" + status0);
+                } else {
+                    chargeCounter0 = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER);
+                    currentNow0 = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW);
+                    currentAverage0 = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_AVERAGE);
+                    energyCounter0 = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_ENERGY_COUNTER);
+                    capacity0 = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
+                    status0 = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_STATUS);
+
+                    Date date = new Date();
+                    Calendar calendar = new GregorianCalendar();
+                    calendar.setTime(date);
+                    DateFormat dateFormat = new SimpleDateFormat("HH:mm");
+
+                    tv05.setText("" + chargeCounter0);
+                    tv10.setText("" + currentNow0);
+                    tv15.setText("" + currentAverage0);
+                    tv20.setText("" + energyCounter0);
+                    tv25.setText("" + capacity0);
+                    tv30.setText("" + status0);
+                    tv35.setText(dateFormat.format(calendar.getTime()));
+
+
+                    btn01.setText("Detener Escáneo");
+                }
             }
         });
 
