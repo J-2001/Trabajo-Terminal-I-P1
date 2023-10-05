@@ -52,7 +52,29 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (btn01_status) {
+                    chargeCounter1 = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER);
+                    currentNow1 = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW);
+                    currentAverage1 = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_AVERAGE);
+                    energyCounter1 = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_ENERGY_COUNTER);
+                    capacity1 = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
+                    status1 = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_STATUS);
 
+                    Date date = new Date();
+                    Calendar calendar = new GregorianCalendar();
+                    calendar.setTime(date);
+                    DateFormat dateFormat = new SimpleDateFormat("HH:mm");
+
+                    tv07.setText("" + chargeCounter1);
+                    tv12.setText("" + currentNow1);
+                    tv17.setText("" + currentAverage1);
+                    tv22.setText("" + energyCounter1);
+                    tv27.setText("" + capacity1);
+                    tv32.setText("" + status1);
+                    tv37.setText(dateFormat.format(calendar.getTime()));
+
+                    btn01_status = false;
+
+                    btn01.setText("Iniciar Escáneo");
                 } else {
                     chargeCounter0 = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER);
                     currentNow0 = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW);
@@ -74,6 +96,15 @@ public class MainActivity extends AppCompatActivity {
                     tv30.setText("" + status0);
                     tv35.setText(dateFormat.format(calendar.getTime()));
 
+                    tv07.setText("0.00");
+                    tv12.setText("0.00");
+                    tv17.setText("0.00");
+                    tv22.setText("0.00");
+                    tv27.setText("0");
+                    tv32.setText("0");
+                    tv37.setText("--:--");
+
+                    btn01_status = true;
 
                     btn01.setText("Detener Escáneo");
                 }
