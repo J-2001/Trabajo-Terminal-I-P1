@@ -5,23 +5,60 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.os.BatteryManager;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
+
+    private Long chargeCounter0 = 0L, chargeCounter1 = 0L;
+    private Long currentNow0 = 0L, currentNow1 = 0L;
+    private Long currentAverage0 = 0L, currentAverage1 = 0L;
+    private Long energyCounter0 = 0L, energyCounter1 = 0L;
+    private Long capacity0 = 0L, capacity1 = 0L;
+    private Long status0 = 0L, status1 = 0L;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        TextView tv01 = this.findViewById(R.id.tv01);
+
         BatteryManager batteryManager = (BatteryManager)this.getSystemService(Context.BATTERY_SERVICE);
-        //Long energy = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_ENERGY_COUNTER);
-        String info1 = "Remaining battery capacity in\nmicroampere-hours:   " + batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER) + " uAh\n\n" +
-                "Instantaneous battery current in\nmicroamperes:   " + batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW) + " uA\n\n" +
-                "Average battery current in\nmicroamperes:   " + batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_AVERAGE) + " uA\n\n" +
-                "Remaining battery capacity as an\ninteger percentage:   " + batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY) + " %\n\n" +
-                "Remaining energy in\nnanowatt-hours:   " + batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_ENERGY_COUNTER) + " nWh\n\n" +
-                "Status: " + batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_STATUS);
-        tv01.setText(info1);
+
+        TextView tv05 = this.findViewById(R.id.tv05);
+        TextView tv07 = this.findViewById(R.id.tv07);
+        TextView tv10 = this.findViewById(R.id.tv10);
+        TextView tv12 = this.findViewById(R.id.tv12);
+        TextView tv15 = this.findViewById(R.id.tv15);
+        TextView tv17 = this.findViewById(R.id.tv17);
+        TextView tv20 = this.findViewById(R.id.tv20);
+        TextView tv22 = this.findViewById(R.id.tv22);
+        TextView tv25 = this.findViewById(R.id.tv25);
+        TextView tv27 = this.findViewById(R.id.tv27);
+        TextView tv30 = this.findViewById(R.id.tv30);
+        TextView tv32 = this.findViewById(R.id.tv32);
+        TextView tv35 = this.findViewById(R.id.tv35);
+        TextView tv37 = this.findViewById(R.id.tv37);
+
+        Button btn01 = this.findViewById(R.id.btn01);
+        btn01.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                chargeCounter0 = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER);
+                currentNow0 = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW);
+                currentAverage0 = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_AVERAGE);
+                energyCounter0 = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_ENERGY_COUNTER);
+                capacity0 = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
+                status0 = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_STATUS);
+
+                tv05.setText("" + chargeCounter0);
+                tv10.setText("" + currentNow0);
+                tv15.setText("" + currentAverage0);
+                tv20.setText("" + energyCounter0);
+                tv25.setText("" + capacity0);
+                tv30.setText("" + status0);
+            }
+        });
+
     }
 }
