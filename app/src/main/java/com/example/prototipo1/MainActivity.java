@@ -2,6 +2,8 @@ package com.example.prototipo1;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.BatteryManager;
 import android.os.Bundle;
@@ -108,6 +110,24 @@ public class MainActivity extends AppCompatActivity {
 
                     btn01.setText("Detener Escáneo");
                 }
+            }
+        });
+
+        Button btn02 = this.findViewById(R.id.btn02);
+        btn02.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String clipboard = "Hora de inicio del escáneo - " + tv35.getText() + ", Hora de termino del escáneo - " + tv37.getText() +
+                        "\nPorcentaje inicial de la batería: " + capacity0 + ", Porcentaje final de la batería: " + capacity1 +
+                        "\nCapacidad inicial de la batería (µAh): " + chargeCounter0 + ", Capacidad final de la batería (µAh): " + chargeCounter1 +
+                        "\nCorriente instántanea inicial (µA): " + currentNow0 + ", Corriente instántanea final(µA): " + currentNow1 +
+                        "\nEnergía restante inicial (nWh): " + energyCounter0 + ", Energía restante final (nWh): " + energyCounter1 +
+                        "\nCorriente promedio inicial (µA): " + currentAverage0 + ", Corriente promedio final (µA): " + currentAverage1 +
+                        "\nEstatus inicial: " + status0 + ", Estatus final: " + status1;
+
+                ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clipData = ClipData.newPlainText("Información Copiada al Portapapeles", clipboard);
+                clipboardManager.setPrimaryClip(clipData);
             }
         });
 
