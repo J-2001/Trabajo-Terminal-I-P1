@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.BatteryManager;
 import android.os.Bundle;
 import android.view.View;
@@ -19,12 +20,8 @@ import java.util.GregorianCalendar;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Long chargeCounter0 = 0L, chargeCounter1 = 0L;
-    private Long currentNow0 = 0L, currentNow1 = 0L;
     private Long currentAverage0 = 0L, currentAverage1 = 0L;
     private Long energyCounter0 = 0L, energyCounter1 = 0L;
-    private Long capacity0 = 0L, capacity1 = 0L;
-    private Long status0 = 0L, status1 = 0L;
     private boolean btn01_status = false;
 
     @Override
@@ -50,58 +47,64 @@ public class MainActivity extends AppCompatActivity {
         TextView tv37 = this.findViewById(R.id.tv37);
 
         Button btn01 = this.findViewById(R.id.btn01);
+
+        Prototype prototype = new Prototype(0, 0, 0, 0, "");
+        FeedReaderDbHelper dbHelper = new FeedReaderDbHelper(getBaseContext());
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
         btn01.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (btn01_status) {
-                    chargeCounter1 = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER);
-                    currentNow1 = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW);
+                    prototype.setChargeCounter(batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER));
+                    prototype.setCurrentNow(batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW));
                     currentAverage1 = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_AVERAGE);
                     energyCounter1 = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_ENERGY_COUNTER);
-                    capacity1 = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
-                    status1 = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_STATUS);
+                    prototype.setCapacity(batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY));
+                    prototype.setStatus(batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_STATUS));
 
                     Date date = new Date();
                     Calendar calendar = new GregorianCalendar();
                     calendar.setTime(date);
                     DateFormat dateFormat = new SimpleDateFormat("HH:mm");
+                    prototype.setTimeStamp(dateFormat.format(calendar.getTime()));
 
-                    tv07.setText("" + chargeCounter1);
-                    tv12.setText("" + currentNow1);
+                    tv07.setText("" + prototype.getChargeCounter());
+                    tv12.setText("" + prototype.getCurrentNow());
                     tv17.setText("" + currentAverage1);
                     tv22.setText("" + energyCounter1);
-                    tv27.setText("" + capacity1);
-                    tv32.setText("" + status1);
-                    tv37.setText(dateFormat.format(calendar.getTime()));
+                    tv27.setText("" + prototype.getCapacity());
+                    tv32.setText("" + prototype.getStatus());
+                    tv37.setText(prototype.getTimeStamp());
 
                     btn01_status = false;
 
                     btn01.setText("Iniciar Escáneo");
                 } else {
-                    chargeCounter0 = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER);
-                    currentNow0 = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW);
+                    prototype.setChargeCounter(batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER));
+                    prototype.setCurrentNow(batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW));
                     currentAverage0 = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_AVERAGE);
                     energyCounter0 = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_ENERGY_COUNTER);
-                    capacity0 = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
-                    status0 = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_STATUS);
+                    prototype.setCapacity(batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY));
+                    prototype.setStatus(batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_STATUS));
 
                     Date date = new Date();
                     Calendar calendar = new GregorianCalendar();
                     calendar.setTime(date);
-                    DateFormat dateFormat = new SimpleDateFormat("HH:mm");
+                    DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+                    prototype.setTimeStamp(dateFormat.format(calendar.getTime()));
 
-                    tv05.setText("" + chargeCounter0);
-                    tv10.setText("" + currentNow0);
+                    tv05.setText("" + prototype.getChargeCounter());
+                    tv10.setText("" + prototype.getCurrentNow());
                     tv15.setText("" + currentAverage0);
                     tv20.setText("" + energyCounter0);
-                    tv25.setText("" + capacity0);
-                    tv30.setText("" + status0);
-                    tv35.setText(dateFormat.format(calendar.getTime()));
+                    tv25.setText("" + prototype.getCapacity());
+                    tv30.setText("" + prototype.getStatus());
+                    tv35.setText(prototype.getTimeStamp());
 
-                    tv07.setText("0.00");
-                    tv12.setText("0.00");
-                    tv17.setText("0.00");
-                    tv22.setText("0.00");
+                    tv07.setText("00");
+                    tv12.setText("00");
+                    tv17.setText("00");
+                    tv22.setText("00");
                     tv27.setText("0");
                     tv32.setText("0");
                     tv37.setText("--:--");
@@ -110,6 +113,8 @@ public class MainActivity extends AppCompatActivity {
 
                     btn01.setText("Detener Escáneo");
                 }
+
+                prototype.setId(db.insert(FeedReaderContract.FeedEntry.TABLE_NAME, null, prototype.toContentValues()));
             }
         });
 
@@ -117,16 +122,8 @@ public class MainActivity extends AppCompatActivity {
         btn02.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String clipboard = "Hora de inicio del escáneo - " + tv35.getText() + ", Hora de termino del escáneo - " + tv37.getText() +
-                        "\nPorcentaje inicial de la batería: " + capacity0 + ", Porcentaje final de la batería: " + capacity1 +
-                        "\nCapacidad inicial de la batería (µAh): " + chargeCounter0 + ", Capacidad final de la batería (µAh): " + chargeCounter1 +
-                        "\nCorriente instántanea inicial (µA): " + currentNow0 + ", Corriente instántanea final(µA): " + currentNow1 +
-                        "\nEnergía restante inicial (nWh): " + energyCounter0 + ", Energía restante final (nWh): " + energyCounter1 +
-                        "\nCorriente promedio inicial (µA): " + currentAverage0 + ", Corriente promedio final (µA): " + currentAverage1 +
-                        "\nEstatus inicial: " + status0 + ", Estatus final: " + status1;
-
                 ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData clipData = ClipData.newPlainText("Información Copiada al Portapapeles", clipboard);
+                ClipData clipData = ClipData.newPlainText("Información Copiada al Portapapeles", prototype.getAll(dbHelper.getReadableDatabase()));
                 clipboardManager.setPrimaryClip(clipData);
             }
         });
