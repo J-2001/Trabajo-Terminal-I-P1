@@ -8,7 +8,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.BatteryManager;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -39,8 +39,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        BatteryManager batteryManager = (BatteryManager)this.getSystemService(Context.BATTERY_SERVICE);
 
         tv05 = this.findViewById(R.id.tv05);
         tv06 = this.findViewById(R.id.tv06);
@@ -73,6 +71,13 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     btn01_status = true;
 
+                    tv06.setText("0");
+                    tv10.setText("0");
+                    tv15.setText("0");
+                    tv20.setText("0");
+                    tv25.setText("0");
+                    tv29.setText("0");
+
                     btn01.setText("Detener Escáneo");
 
                     startService(intent);
@@ -85,8 +90,12 @@ public class MainActivity extends AppCompatActivity {
         btn02.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData clipData = ClipData.newPlainText("Información Copiada al Portapapeles", "prototype.getAll(dbHelper.getReadableDatabase())");
+                FeedReaderDbHelper dbHelper = new FeedReaderDbHelper(getApplicationContext());
+                SQLiteDatabase db = dbHelper.getReadableDatabase();
+                Prototype prototype = new Prototype();
+
+                ClipboardManager clipboardManager = (ClipboardManager) getApplicationContext().getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clipData = ClipData.newPlainText("Información Copiada al Portapapeles", prototype.getAll(db));
                 clipboardManager.setPrimaryClip(clipData);
             }
         });
@@ -98,15 +107,32 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public class MyBroadcastReceiver extends BroadcastReceiver{
+    public class MyBroadcastReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()) {
                 case "initialValues":
-                        String[] propiedad = intent.getStringArrayExtra("data");
+                    String[] propiedad = intent.getStringArrayExtra("data");
+                    tv05.setText(propiedad[0]);
+                    tv08.setText(propiedad[1]);
+                    tv13.setText(propiedad[2]);
+                    tv18.setText(propiedad[3]);
+                    tv23.setText(propiedad[4]);
+                    tv28.setText(propiedad[5]);
+                    tv31.setText(propiedad[6]);
+                    tv34.setText(propiedad[7]);
+
                     break;
                 case "finalValues":
+                    String[] propiedad1 = intent.getStringArrayExtra("data");
+                    tv06.setText(propiedad1[0]);
+                    tv10.setText(propiedad1[1]);
+                    tv15.setText(propiedad1[2]);
+                    tv20.setText(propiedad1[3]);
+                    tv25.setText(propiedad1[4]);
+                    tv29.setText(propiedad1[5]);
+
                     break;
             }
         }

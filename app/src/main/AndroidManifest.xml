@@ -22,8 +22,7 @@
             </intent-filter>
         </activity>
         <service
-            android:name=".batteryService"
-            android:description="Consumo de energia en aplicaciones de Video Streaming"/>
+            android:name=".batteryService"/>
     </application>
 
 </manifest>
