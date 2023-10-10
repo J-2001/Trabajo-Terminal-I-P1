@@ -55,7 +55,7 @@ public class batteryService extends Service {
                 if (initial) {
                     initial = false;
                     prototype.setCurrentAverage(batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_AVERAGE));
-                    prototype.setCurrentAverage(batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_ENERGY_COUNTER));
+                    prototype.setEnergyCounter(batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_ENERGY_COUNTER));
 
                     Intent intent = new Intent();
                     intent.setAction("initialValues");
