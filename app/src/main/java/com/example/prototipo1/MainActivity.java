@@ -33,6 +33,10 @@ public class MainActivity extends AppCompatActivity {
     private Button btn01;
     private Button btn02;
 
+    private DateHandler dateHandler = new DateHandler();
+
+    private String initialTimeStamp;
+
     private boolean btn01_status = false;
 
     @Override
@@ -80,6 +84,8 @@ public class MainActivity extends AppCompatActivity {
 
                     btn01.setText("Detener Escáneo");
 
+                    initialTimeStamp = dateHandler.getTimeStampDB();
+
                     startService(intent);
                 }
             }
@@ -95,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
                 Prototype prototype = new Prototype();
 
                 ClipboardManager clipboardManager = (ClipboardManager) getApplicationContext().getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData clipData = ClipData.newPlainText("Información Copiada al Portapapeles", prototype.getAll(db));
+                ClipData clipData = ClipData.newPlainText("Información Copiada al Portapapeles", prototype.getLastScan(db, initialTimeStamp));
                 clipboardManager.setPrimaryClip(clipData);
             }
         });

@@ -14,6 +14,7 @@ public class Prototype {
     private String timeStamp;
     private long currentAverage;
     private long energyCounter;
+    private DateHandler dateHandler;
 
     public Prototype() {
         this.id = 0;
@@ -24,6 +25,7 @@ public class Prototype {
         this.timeStamp = "";
         this.currentAverage = 0;
         this.energyCounter = 0;
+        this.dateHandler = new DateHandler();
     }
 
     public long getId() {
@@ -92,7 +94,7 @@ public class Prototype {
 
     public String[] toStringArray() {
         String[] s = {this.id + "", this.chargeCounter + "", this.currentNow + "", this.capacity + "", this.status + "",
-                this.timeStamp, this.currentAverage + "", this.energyCounter + ""};
+                this.dateHandler.formatDBDate(this.timeStamp), this.currentAverage + "", this.energyCounter + ""};
         return s;
     }
 
@@ -104,6 +106,23 @@ public class Prototype {
         values.put(FeedReaderContract.FeedEntry.COLUMN_STATUS, this.status);
         values.put(FeedReaderContract.FeedEntry.COLUMN_TIMESTAMP, this.timeStamp);
         return values;
+    }
+
+    public String getLastScan(SQLiteDatabase db, String timeStamp) {
+        String table = "";
+        String selection = FeedReaderContract.FeedEntry.COLUMN_TIMESTAMP + " > ?";
+        String[] selectionArgs = {timeStamp};
+        Cursor cursor = db.query(FeedReaderContract.FeedEntry.TABLE_NAME, null, selection, selectionArgs, null, null, null);
+        while (cursor.moveToNext()) {
+            table += "ID: " + cursor.getLong(cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry._ID)) +
+                    ", Capacidad restante: " + cursor.getLong(cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_CHARGE_COUNTER)) +
+                    " µAh, Corriente Instantánea: " + cursor.getLong(cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_CURRENT_NOW)) +
+                    " µA, Capacidad: " + cursor.getLong(cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_CAPACITY)) +
+                    " %, Estatus: " + cursor.getLong(cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_STATUS)) +
+                    ", TimeStamp: " + cursor.getString(cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_TIMESTAMP)) + "\n\n";
+        }
+        cursor.close();
+        return table;
     }
 
     public String getAll(SQLiteDatabase db) {
