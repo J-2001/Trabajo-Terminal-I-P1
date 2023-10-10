@@ -21,12 +21,14 @@ public class batteryService extends Service {
     private FeedReaderDbHelper dbHelper;
     private BatteryManager batteryManager;
     private TimerTask timerTask;
+    private boolean initial;
 
     @Override
     public void onCreate() {
-        prototype = new Prototype(0, 0, 0, 0, "");
+        prototype = new Prototype();
         dbHelper = new FeedReaderDbHelper(getApplicationContext());
         batteryManager = (BatteryManager) getApplicationContext().getSystemService(Context.BATTERY_SERVICE);
+        initial = true;
     }
 
     @Override
@@ -47,7 +49,19 @@ public class batteryService extends Service {
                 Calendar calendar = new GregorianCalendar();
                 calendar.setTime(date);
                 prototype.setTimeStamp(dateFormat.format(calendar.getTime()));
+
                 prototype.setId(db.insert(FeedReaderContract.FeedEntry.TABLE_NAME, null, prototype.toContentValues()));
+
+                if (initial) {
+                    initial = false;
+                    prototype.setCurrentAverage(batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_AVERAGE));
+                    prototype.setCurrentAverage(batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_ENERGY_COUNTER));
+
+                    Intent intent = new Intent();
+                    intent.setAction("initialValues");
+                    intent.putExtra("data", prototype.toStringArray());
+                    sendBroadcast(intent);
+                }
             }
         };
         timer.scheduleAtFixedRate(timerTask, 0, 30000);
@@ -58,6 +72,11 @@ public class batteryService extends Service {
     @Override
     public void onDestroy() {
         timerTask.cancel();
+
+        Intent intent = new Intent();
+        intent.setAction("finalValues");
+        intent.putExtra("data", prototype.toStringArray());
+        sendBroadcast(intent);
     }
 
     @Override

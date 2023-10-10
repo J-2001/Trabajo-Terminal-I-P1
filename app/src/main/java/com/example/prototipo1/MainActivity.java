@@ -2,22 +2,17 @@ package com.example.prototipo1;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
+import android.content.IntentFilter;
 import android.os.BatteryManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView tv29;
     private TextView tv31;
     private TextView tv34;
+    private Button btn01;
+    private Button btn02;
 
     private boolean btn01_status = false;
 
@@ -60,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         tv31 = this.findViewById(R.id.tv31);
         tv34 = this.findViewById(R.id.tv34);
 
-        Button btn01 = this.findViewById(R.id.btn01);
+        btn01 = this.findViewById(R.id.btn01);
 
         Intent intent = new Intent(this, batteryService.class);
 
@@ -83,7 +80,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Button btn02 = this.findViewById(R.id.btn02);
+        btn02 = this.findViewById(R.id.btn02);
+
         btn02.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -93,9 +91,25 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        BroadcastReceiver br = new MyBroadcastReceiver();
+        IntentFilter filter = new IntentFilter("initialValues");
+        filter.addAction("finalValues");
+        this.registerReceiver(br, filter);
+
     }
 
-    public void setInitialValues() {
+    public class MyBroadcastReceiver extends BroadcastReceiver{
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()) {
+                case "initialValues":
+                        String[] propiedad = intent.getStringArrayExtra("data");
+                    break;
+                case "finalValues":
+                    break;
+            }
+        }
 
     }
 }

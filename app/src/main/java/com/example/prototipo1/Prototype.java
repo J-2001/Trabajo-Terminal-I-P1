@@ -12,14 +12,18 @@ public class Prototype {
     private long capacity;
     private long status;
     private String timeStamp;
+    private long currentAverage;
+    private long energyCounter;
 
-    public Prototype(long chargeCounter, long currentNow, long capacity, long status, String timeStamp) {
+    public Prototype() {
         this.id = 0;
-        this.chargeCounter = chargeCounter;
-        this.currentNow = currentNow;
-        this.capacity = capacity;
-        this.status = status;
-        this.timeStamp = timeStamp;
+        this.chargeCounter = 0;
+        this.currentNow = 0;
+        this.capacity = 0;
+        this.status = 0;
+        this.timeStamp = "";
+        this.currentAverage = 0;
+        this.energyCounter = 0;
     }
 
     public long getId() {
@@ -46,6 +50,14 @@ public class Prototype {
         return timeStamp;
     }
 
+    public long getCurrentAverage() {
+        return currentAverage;
+    }
+
+    public long getEnergyCounter() {
+        return energyCounter;
+    }
+
     public void setId(long id) {
         this.id = id;
     }
@@ -68,6 +80,20 @@ public class Prototype {
 
     public void setTimeStamp(String timeStamp) {
         this.timeStamp = timeStamp;
+    }
+
+    public void setCurrentAverage(long currentAverage) {
+        this.currentAverage = currentAverage;
+    }
+
+    public void setEnergyCounter(long energyCounter) {
+        this.energyCounter = energyCounter;
+    }
+
+    public String[] toStringArray() {
+        String[] s = {this.id + "", this.chargeCounter + "", this.currentNow + "", this.capacity + "", this.status + "",
+                this.timeStamp, this.currentAverage + "", this.energyCounter + ""};
+        return s;
     }
 
     public ContentValues toContentValues() {
