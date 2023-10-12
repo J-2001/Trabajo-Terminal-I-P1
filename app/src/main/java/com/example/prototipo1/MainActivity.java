@@ -1,6 +1,7 @@
 package com.example.prototipo1;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import android.content.BroadcastReceiver;
 import android.content.ClipData;
@@ -14,8 +15,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.android.material.snackbar.Snackbar;
+
 public class MainActivity extends AppCompatActivity {
 
+    private CoordinatorLayout coordinatorLayout;
     private TextView tv05;
     private TextView tv06;
     private TextView tv08;
@@ -32,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView tv34;
     private Button btn01;
     private Button btn02;
+    private Button btn03;
 
     private DateHandler dateHandler = new DateHandler();
 
@@ -44,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        coordinatorLayout = this.findViewById(R.id.coordinatorLayout);
         tv05 = this.findViewById(R.id.tv05);
         tv06 = this.findViewById(R.id.tv06);
         tv08 = this.findViewById(R.id.tv08);
@@ -93,15 +99,25 @@ public class MainActivity extends AppCompatActivity {
 
         btn02 = this.findViewById(R.id.btn02);
 
+        FeedReaderDbHelper dbHelper = new FeedReaderDbHelper(getApplicationContext());
+        Prototype prototype = new Prototype();
+        ClipboardManager clipboardManager = (ClipboardManager)getApplicationContext().getSystemService(Context.CLIPBOARD_SERVICE);
+
         btn02.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FeedReaderDbHelper dbHelper = new FeedReaderDbHelper(getApplicationContext());
                 SQLiteDatabase db = dbHelper.getReadableDatabase();
-                Prototype prototype = new Prototype();
-
-                ClipboardManager clipboardManager = (ClipboardManager) getApplicationContext().getSystemService(Context.CLIPBOARD_SERVICE);
                 ClipData clipData = ClipData.newPlainText("Información Copiada al Portapapeles", prototype.getLastScan(db, initialTimeStamp));
+                clipboardManager.setPrimaryClip(clipData);
+            }
+        });
+
+        btn03 = this.findViewById(R.id.btn03);
+        btn03.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SQLiteDatabase db= dbHelper.getReadableDatabase();
+                ClipData clipData = ClipData.newPlainText("Información Copiada al Portapapeles", prototype.getAll(db));
                 clipboardManager.setPrimaryClip(clipData);
             }
         });
@@ -129,6 +145,9 @@ public class MainActivity extends AppCompatActivity {
                     tv31.setText(propiedad[6]);
                     tv34.setText(propiedad[7]);
 
+                    Snackbar snackbar = Snackbar.make(coordinatorLayout, "Escáneo comenzado!", Snackbar.LENGTH_SHORT);
+                    snackbar.show();
+
                     break;
                 case "finalValues":
                     String[] propiedad1 = intent.getStringArrayExtra("data");
@@ -138,6 +157,9 @@ public class MainActivity extends AppCompatActivity {
                     tv20.setText(propiedad1[3]);
                     tv25.setText(propiedad1[4]);
                     tv29.setText(propiedad1[5]);
+
+                    Snackbar snackbar1 = Snackbar.make(coordinatorLayout, "Escáneo Finalizado...", Snackbar.LENGTH_SHORT);
+                    snackbar1.show();
 
                     break;
             }
